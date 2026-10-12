@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: velib_raw
+    description: Réponses brutes de l'API GBFS Vélib, chargées par ingestion/ingest_velib.py
+    schema: raw
+    tables:
+      - name: station_information
+        description: Une ligne par appel au flux station_information
+      - name: station_status
+        description: Une ligne par appel au flux station_status
