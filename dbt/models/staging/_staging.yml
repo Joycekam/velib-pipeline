@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: stg_velib_station_information
+    description: Une ligne par station et par collecte, issue du flux station_information
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [ingested_at, station_id]
+    columns:
+      - name: station_id
+        description: Identifiant technique de la station, clé de jointure avec les statuts
+        data_tests:
+          - not_null
+      - name: station_name
+        data_tests:
+          - not_null
+      - name: latitude
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 48.5
+                max_value: 49.2
+      - name: longitude
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1.9
+                max_value: 2.9
+      - name: capacity
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: stg_velib_station_status
+    description: Une ligne par station et par collecte, issue du flux station_status
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [ingested_at, station_id]
+    columns:
+      - name: station_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_velib_station_information')
+                field: station_id
+              config:
+                severity: warn
+      - name: bikes_available
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: docks_available
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
