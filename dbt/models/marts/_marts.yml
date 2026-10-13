@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_stations
+    description: Une ligne par station, avec sa dernière version connue
+    columns:
+      - name: station_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_station_status
+    description: Une ligne par station et par collecte, avec les indicateurs de disponibilité
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [ingested_at, station_id]
+    columns:
+      - name: station_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_stations')
+                field: station_id
+      - name: occupancy_rate
+        description: Part des emplacements utilisables occupés par un vélo, entre 0 et 1
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1

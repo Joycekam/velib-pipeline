@@ -1,0 +1,11 @@
+velib:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT', 'velib-data-pipeline') }}"
+      dataset: staging
+      location: EU
+      threads: 4
+      job_execution_timeout_seconds: 300

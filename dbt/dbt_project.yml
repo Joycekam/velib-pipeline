@@ -18,6 +18,7 @@ clean-targets:
 models:
   velib:
     staging:
-      +materialized: view
+      +materialized: table
     marts:
       +materialized: table
+      +schema: marts
